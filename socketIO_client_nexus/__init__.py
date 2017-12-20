@@ -37,8 +37,9 @@ class EngineIO(LoggingMixin):
     def __init__(
             self, host, port=None, Namespace=EngineIONamespace,
             wait_for_connection=True, transports=TRANSPORTS,
-            resource='engine.io', hurry_interval_in_seconds=1, **kw):
+            resource='engine.io', hurry_interval_in_seconds=1, needs_ssl_v4=False,**kw):
         self._is_secure, self._url = parse_host(host, port, resource)
+        self._needs_sslv4 = needs_ssl_v4
         self._wait_for_connection = wait_for_connection
         self._client_transports = transports
         self._hurry_interval_in_seconds = hurry_interval_in_seconds
@@ -136,7 +137,7 @@ class EngineIO(LoggingMixin):
         }[transport_name]
         return SelectedTransport(
             self._http_session, self._is_secure, self._url,
-            self._engineIO_session)
+            self._engineIO_session, needs_sslv4=self._needs_sslv4)
 
     def __enter__(self):
         return self
@@ -344,7 +345,7 @@ class SocketIO(EngineIO):
     def __init__(
             self, host='localhost', port=None, Namespace=SocketIONamespace,
             wait_for_connection=True, transports=TRANSPORTS,
-            resource='socket.io', hurry_interval_in_seconds=1, **kw):
+            resource='socket.io', hurry_interval_in_seconds=1, needs_sslv4=False, **kw):
         self._namespace_by_path = {}
         self._callback_by_ack_id = {}
         self._ack_id = 0

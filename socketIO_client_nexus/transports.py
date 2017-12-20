@@ -32,10 +32,11 @@ TRANSPORTS = 'xhr-polling', 'websocket'
 
 class AbstractTransport(object):
 
-    def __init__(self, http_session, is_secure, url, engineIO_session=None):
+    def __init__(self, http_session, is_secure, url, needs_sslv4=False, engineIO_session=None):
         self.http_session = http_session
         self.is_secure = is_secure
         self.url = url
+        self._needs_sslv4=needs_sslv4
         self.engineIO_session = engineIO_session
 
     def recv_packet(self):
@@ -135,7 +136,10 @@ class WebsocketTransport(AbstractTransport):
                 else:
                     kw['ca_certs'] = http_session.cert[0]
         else:  # Do not verify the SSL certificate
-            kw['sslopt'] = {'cert_reqs': ssl.CERT_NONE, 'ssl_version':'TLSv1.2'}
+            if self._needs_sslv4:
+                kw['sslopt'] = {'cert_reqs': ssl.CERT_NONE, 'ssl_version':'TLSv1.2'}
+            else:
+                kw['sslopt'] = {'cert_reqs': ssl.CERT_NONE}
         try:
             self._connection = create_connection(ws_url, **kw)
         except Exception as e:
