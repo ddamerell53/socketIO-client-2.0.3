@@ -135,7 +135,7 @@ class WebsocketTransport(AbstractTransport):
                 else:
                     kw['ca_certs'] = http_session.cert[0]
         else:  # Do not verify the SSL certificate
-            kw['sslopt'] = {'cert_reqs': ssl.CERT_NONE}
+            kw['sslopt'] = {'cert_reqs': ssl.CERT_NONE, 'ssl_version':'TLSv1.2'}
         try:
             self._connection = create_connection(ws_url, **kw)
         except Exception as e:
