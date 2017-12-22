@@ -51,9 +51,9 @@ class AbstractTransport(object):
 
 class XHR_PollingTransport(AbstractTransport):
 
-    def __init__(self, http_session, is_secure, url, needs_sslv4=False, engineIO_session=None):
+    def __init__(self, http_session, is_secure, url, engineIO_session=None,needs_sslv4=False):
         super(XHR_PollingTransport, self).__init__(
-            http_session, is_secure, url, needs_sslv4,engineIO_session)
+            http_session, is_secure, url, engineIO_session, needs_sslv4)
         self._params = {
             'EIO': ENGINEIO_PROTOCOL, 'transport': 'polling'}
         if engineIO_session:
@@ -109,9 +109,9 @@ class XHR_PollingTransport(AbstractTransport):
 
 class WebsocketTransport(AbstractTransport):
 
-    def __init__(self, http_session, is_secure, url, needs_sslv4=False,engineIO_session=None):
+    def __init__(self, http_session, is_secure, url, engineIO_session=None,needs_sslv4=False,):
         super(WebsocketTransport, self).__init__(
-            http_session, is_secure, url, needs_sslv4, engineIO_session)
+            http_session, is_secure, url, engineIO_session,needs_sslv4)
         params = dict(http_session.params, **{
             'EIO': ENGINEIO_PROTOCOL, 'transport': 'websocket'})
         request = http_session.prepare_request(requests.Request('GET', url))
